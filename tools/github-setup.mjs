@@ -6,8 +6,11 @@
 // manual; this script says so rather than pretending otherwise.
 //
 //   node tools/github-setup.mjs --dry-run                 # show the requests
-//   GH_TOKEN=ghp_... node tools/github-setup.mjs          # apply
+//   node tools/github-setup.mjs --token-file=~/.gh-token  # apply (recommended)
+//   GH_TOKEN=ghp_... node tools/github-setup.mjs          # apply via environment
 //   node tools/github-setup.mjs --token=ghp_... --user=x --repo=y
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import url from 'node:url';
 import { fetchChecked, ensureTrustedTlsSync } from './lib/net.mjs';
@@ -21,8 +24,46 @@ const arg = (k, d) => {
 
 const USER = arg('user', 'Darling-Y1230');
 const REPO = arg('repo', 'cyberpunk-city-generator');
-const TOKEN = arg('token', process.env.GH_TOKEN || process.env.GITHUB_TOKEN || '');
 const DRY = argv.includes('--dry-run');
+
+/**
+ * The token can come from an argument, an environment variable, or a file.
+ *
+ * The file is the one to prefer: a token passed with --token= lands in your
+ * shell history, and one pasted into a chat lands in that transcript. A file
+ * keeps it out of both, and this script never prints it — only the HTTP status
+ * of each call.
+ *
+ * `~/` is expanded, BOMs and trailing newlines are stripped: on Windows it is
+ * very easy to end up with either, and the resulting 401 gives no hint that
+ * whitespace was the problem.
+ */
+function resolveToken() {
+  const direct = arg('token', '');
+  if (direct) return { token: direct.trim(), from: 'command line' };
+
+  let file = arg('token-file', '');
+  if (file) {
+    if (file.startsWith('~/') || file.startsWith('~\\')) {
+      file = path.join(os.homedir(), file.slice(2));
+    }
+    file = path.resolve(file);
+    if (!fs.existsSync(file)) {
+      console.error(`  token file not found: ${file}`);
+      process.exit(1);
+    }
+    const raw = fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, '').trim();
+    if (!raw) { console.error(`  token file is empty: ${file}`); process.exit(1); }
+    return { token: raw, from: `file ${file}` };
+  }
+
+  const env = process.env.GH_TOKEN || process.env.GITHUB_TOKEN || '';
+  if (env) return { token: env.trim(), from: 'environment' };
+
+  return { token: '', from: null };
+}
+
+const { token: TOKEN, from: TOKEN_FROM } = resolveToken();
 
 const PAGES = `https://${USER.toLowerCase()}.github.io/${REPO}/`;
 const DESCRIPTION = 'Procedural cyberpunk mega-city generator - real urban planning, '
@@ -52,8 +93,12 @@ const CALLS = [
 /* --------------------------------------------------------------- dry run */
 if (DRY || !TOKEN) {
   if (!DRY) {
-    console.log('\n  no token found. Set GH_TOKEN, or pass --token=..., or use --dry-run.');
-    console.log('  A classic token with the "repo" scope is enough.\n');
+    console.log('\n  no token found. Any one of these works:');
+    console.log('    --token-file=<path>   read it from a file (recommended: it stays');
+    console.log('                          out of your shell history and out of any log)');
+    console.log('    GH_TOKEN=...          environment variable');
+    console.log('    --token=...           literal, but it lands in your shell history');
+    console.log('  A classic token with the "repo" scope is enough for everything below.\n');
   }
   console.log(`  target: ${USER}/${REPO}\n`);
   for (const c of CALLS) {
@@ -97,7 +142,8 @@ async function main() {
     return { status: res.status, ok: res.ok, json, text };
   }
 
-  console.log(`\n  configuring ${USER}/${REPO}\n`);
+  console.log(`\n  configuring ${USER}/${REPO}`);
+  console.log(`  token from: ${TOKEN_FROM}\n`);
 
   // Fail fast with a useful message rather than three confusing errors.
   const probe = await call(api('GET', ''));

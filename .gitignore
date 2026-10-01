@@ -40,6 +40,12 @@ __pycache__/
 Thumbs.db
 desktop.ini
 
+# Secrets: never commit these. The token file is meant to live OUTSIDE the repo
+# (e.g. D:\deepseek harness\.gh-token), but belt and braces.
+.gh-token
+*.token
+.env
+
 # scratch files produced while iterating
 /_scratch/
 /notes-*.md
