@@ -3,7 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>NEO-KOWLOON · 程序化赛博朋克超级都市</title>
+<title>NEO-KOWLOON · 程序化赛博朋克超级都市生成器</title>
+<meta name="description" content="程序化赛博朋克超级都市生成器：真实城市规划算法、竞价地租分区、三级路网、GPU 人群模拟与霓虹渲染，全部打包成单个自包含的 HTML 文件。双击即玩，无需联网，无运行时依赖。Procedural cyberpunk mega-city generator — 16 districts, three-tier road network, 50 000 agents, one self-contained HTML file.">
+<!-- No byte count in the description on purpose: the size is printed by the
+     build, so embedding it here would make every build change its own
+     documented size. The README carries the current figure instead. -->
+<meta name="theme-color" content="#04060b">
+<meta name="color-scheme" content="dark">
+<!-- Inline SVG favicon: a neon skyline. Keeps the build a single file with no
+     external requests, and stops the browser 404-ing on /favicon.ico. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0616'/%3E%3Cg stroke-linecap='round' stroke-width='3.4'%3E%3Cpath d='M8.5 25.5V15' stroke='%2320e6d6'/%3E%3Cpath d='M16 25.5V6.5' stroke='%23ff3fa4'/%3E%3Cpath d='M23.5 25.5V11' stroke='%23a83cff'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEO-KOWLOON">
+<meta property="og:title" content="NEO-KOWLOON · 程序化赛博朋克超级都市生成器">
+<meta property="og:description" content="每次刷新都是一座不同的赛博朋克超级都市：16 个功能区、三级路网、50 000 名市民，全部由代码生成。单个自包含 HTML 文件，双击即玩。">
+<meta property="og:image" content="https://darling-y1230.github.io/cyberpunk-city-generator/img/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
 <style>
   :root{
     --neon-blue:#2f7bff; --neon-cyan:#20e6d6; --neon-purple:#a83cff;

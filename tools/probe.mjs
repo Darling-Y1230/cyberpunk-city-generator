@@ -11,6 +11,8 @@ const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
 const PORT = 9444;
 const EXPR = process.argv[2] || '1';
 const SIZE = process.argv[3] || '1024';
+// optional full URL override, e.g. http://127.0.0.1:8173/ to probe an HTTP origin
+const OVERRIDE = process.argv[4] || '';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const profile = path.join(os.tmpdir(), 'cpk-probe-' + Date.now());
 
@@ -47,7 +49,7 @@ const ev = async (expr) => {
 
 await send('Runtime.enable');
 await send('Page.enable');
-const file = 'file:///' + path.join(ROOT, 'dist', 'cyberpunk-city.html').replace(/\\/g, '/') + '?size=' + SIZE;
+const file = OVERRIDE || ('file:///' + path.join(ROOT, 'dist', 'cyberpunk-city.html').replace(/\\/g, '/') + '?size=' + SIZE);
 await send('Page.navigate', { url: file });
 
 for (let i = 0; i < 200; i++) {

@@ -29,8 +29,14 @@ const TIMEOUT = parseInt(arg('timeout', '600'), 10) * 1000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const profile = path.join(os.tmpdir(), 'cpk-cdp-' + Date.now());
-const pageUrl = 'file:///' + path.join(ROOT, 'dist', 'cyberpunk-city.html').replace(/\\/g, '/')
-  + (SEED ? `?seed=${SEED}` : '') + (SIZE ? (SEED ? '&' : '?') + 'size=' + SIZE : '');
+// Default is the single file over file://, which is how most people will open
+// it. --url= lets the same suite run against a real HTTP origin, which is how
+// GitHub Pages serves it — a different code path for origin, MIME and caching.
+const BASE = arg('url', '');
+const pageUrl = (BASE || 'file:///' + path.join(ROOT, 'dist', 'cyberpunk-city.html').replace(/\\/g, '/'))
+  + (SEED ? (BASE.includes('?') ? '&' : '?') + 'seed=' + SEED : '')
+  + (SIZE ? (BASE.includes('?') || SEED ? '&' : '?') + 'size=' + SIZE : '');
+console.log('  target:', pageUrl);
 
 console.log('launching headless Edge…');
 const child = spawn(EDGE, [
@@ -50,6 +56,24 @@ let msgId = 0;
 const pending = new Map();
 const errors = [];
 const logs = [];
+// Every generation the harness observes is checked against this. Without it the
+// script always exited 0 and "PASS" only described the twelve generator checks,
+// so a page throwing exceptions would still look like a clean run.
+const gate = [];
+const checkRun = (label, input) => {
+  // Callers pass either an already-parsed object (the default run) or a raw
+  // JSON string (the stress and size-sweep evaluations).
+  let o = input;
+  if (typeof input === 'string') {
+    try { o = JSON.parse(input); } catch { gate.push(`${label}: unreadable result`); return; }
+  }
+  if (!o || typeof o !== 'object') { gate.push(`${label}: no result`); return; }
+  if (o.verdict && o.verdict !== 'PASS') gate.push(`${label}: verdict ${o.verdict}`);
+  for (const c of o.checks || []) if (String(c).startsWith('FAIL')) gate.push(`${label}: ${c}`);
+  for (const f of o.fails || []) gate.push(`${label}: check failed -> ${f}`);
+  if (o.FAILED) gate.push(`${label}: ${o.FAILED}`);
+  if (o.ERROR) gate.push(`${label}: ${o.ERROR}`);
+};
 
 function send(method, params = {}) {
   const id = ++msgId;
@@ -251,6 +275,7 @@ if (arg('stress', '1') === '1') try {
   const st2 = await evaluate(`(()=>{const i=window.__CITY.engine.renderer.info;return JSON.stringify({
     gen:window.__CITY.lastTimings, npc:window.__CITY.world.crowd.total,
     calls:i.render.calls, tris:i.render.triangles, verdict:window.__CITY.world.report.verdict});})()`);
+  checkRun('50k stress' + (done ? '' : ' [timed out]'), st2);
   console.log('  50k stress: ' + (done ? 'completed' : 'TIMED OUT') + ' — ' + st2);
   const shot = await send('Page.captureScreenshot', { format: 'png' });
   fs.writeFileSync(path.join(SHOTS, '06-50k-agents.png'), Buffer.from(shot.data, 'base64'));
@@ -268,12 +293,13 @@ if (arg('seed2', '1') === '1') try {
       const w = await evaluate(`!!(window.__CITY.world && window.__CITY.seed==='${seed}' && document.querySelector('.loader').classList.contains('gone'))`);
       if (w) { done = true; break; }
     }
-    if (!done) { results.push(`${size}: TIMED OUT`); continue; }
+    if (!done) { gate.push(`size sweep ${size}: timed out`); results.push(`${size}: TIMED OUT`); continue; }
     await sleep(2500);
     const v = await evaluate(`(()=>{const c=window.__CITY,r=c.world.report,s=r.summary,i=c.engine.renderer.info;
       return JSON.stringify({size:c.cfg.world.mapSize,verdict:r.verdict,ms:Math.round(Object.values(c.lastTimings).reduce((a,b)=>a+b,0)),
         buildings:s.buildings,signs:s.signs,props:s.props,npc:s.npc,neon:s.neonSources,cables:s.cables,
         calls:i.render.calls,tris:i.render.triangles,fails:r.checks.filter(x=>!x.ok).map(x=>x.id+':'+x.value)});})()`);
+    checkRun('size sweep', v);
     results.push(v);
     await sleep(600);
     await evaluate(`__CITY.rig.setMode('topdown');__CITY.rig.td.dist=__CITY.world.plan.Rc*2.1;__CITY.rig.td.elev=0.98;__CITY.rig.td.pan.set(0,0,0);__CITY.rig.td.yaw=-0.78;`);
@@ -289,6 +315,7 @@ if (arg('seed2', '1') === '1') try {
 console.log('\n================ GENERATION ================');
 console.log('wall clock: ' + genSeconds + ' s');
 console.log(JSON.stringify(state, null, 1));
+checkRun('default', state);
 
 console.log('\n================ CONSOLE ERRORS ================');
 console.log(errors.length ? errors.slice(0, 3).join('\n---\n') : 'NONE');
@@ -297,9 +324,22 @@ if (errors.length > 3) console.log(`... and ${errors.length - 3} more`);
 console.log('\n================ CONSOLE LOG ================');
 console.log(logs.slice(-12).join('\n'));
 
+/* ---------------- verdict ---------------- */
+// The exit code is the point: this is only useful as a gate if a broken run
+// fails. Console noise counts, because the brief is a clean console.
+const problems = [...gate, ...errors.map((e) => 'console: ' + e)];
+console.log('\n================ RESULT ================');
+if (problems.length) {
+  console.log(`FAIL — ${problems.length} problem(s):`);
+  for (const p of problems.slice(0, 10)) console.log('  x ' + p);
+  if (problems.length > 10) console.log(`  ... and ${problems.length - 10} more`);
+} else {
+  console.log('PASS — every generation check passed, no console errors.');
+}
+
 try { ws.close(); } catch { }
 child.kill();
 await sleep(500);
 try { fs.rmSync(profile, { recursive: true, force: true }); } catch { }
 console.log('\nDONE');
-process.exit(0);
+process.exit(problems.length ? 1 : 0);

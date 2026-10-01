@@ -8,7 +8,7 @@
 一座公元 2080–2150 年间的未来超级都市，完全由代码生成 —— 每次都不同。
 
 [![Live demo](https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E8%AF%95%E7%8E%A9-LIVE_DEMO-ff3fa4?style=for-the-badge)](https://darling-y1230.github.io/cyberpunk-city-generator/)
-[![Download](https://img.shields.io/badge/%E2%AC%87_%E4%B8%8B%E8%BD%BD-962_KB_%E5%8D%95%E6%96%87%E4%BB%B6-20e6d6?style=for-the-badge)](../../releases/latest)
+[![Download](https://img.shields.io/badge/%E2%AC%87_%E4%B8%8B%E8%BD%BD-964_KB_%E5%8D%95%E6%96%87%E4%BB%B6-20e6d6?style=for-the-badge)](../../releases/latest)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-2f7bff.svg?style=flat-square)](LICENSE)
 [![three.js](https://img.shields.io/badge/three.js-r160-a83cff.svg?style=flat-square)](https://threejs.org)
@@ -36,7 +36,7 @@
 **每次刷新都是一座不同的城市。** 而每一座都满足同一套硬约束：16 个功能区齐备、
 路网无断裂、无穿模、无漂浮建筑、每商业街区 ≥5 块广告牌、霓虹色比符合规格。
 
-最终产物是 **一个 962 KB 的 HTML 文件** —— 双击就能玩，不需要联网、不需要装任何东西。
+最终产物是 **一个 964 KB 的 HTML 文件** —— 双击就能玩，不需要联网、不需要装任何东西。
 
 <table>
 <tr>
@@ -67,7 +67,7 @@
 
 ### 一 · 直接双击（最简单）
 
-下载 [`dist/cyberpunk-city.html`](dist/cyberpunk-city.html) —— **962 KB，双击即可**。
+下载 [`dist/cyberpunk-city.html`](dist/cyberpunk-city.html) —— **964 KB，双击即可**。
 不需要 Node，不需要服务器，不需要联网。
 
 > 微信 / QQ 会拦截 `.html` 附件：压成 zip 发，或改名 `.html.txt` 让对方改回来。
@@ -233,8 +233,28 @@ network emulation: OFFLINE
 $ git checkout-index -a -f --prefix=_clean/ && cd _clean
 $ node tools/fetch-deps.mjs && node tools/build.mjs
 $ sha256sum dist/cyberpunk-city.html
-e0abd694a3b2e561641cc1efe2f10a9a52c9d3f1d26d632c8d34e439194fa940
+ab35f72e831db6dd39e0ee5ce0cce8f4d1ef38eb0767092787a123cb55e732da
 ```
+
+**HTTP 源同样验证过**：`file://` 和 `http://` 是两条不同的代码路径（来源、MIME、缓存），
+而 GitHub Pages 走的是后者。所以验证脚本也支持直接测 HTTP 源：
+
+```
+$ node tools/serve.mjs &
+$ node tools/verify.mjs --url=http://127.0.0.1:8173/
+  512²  PASS  219 ms   177 buildings   242 calls
+  1024² PASS  535 ms  1037 buildings   327 calls
+  2048² PASS 1240 ms  2451 buildings   374 calls
+  50 000 agents  PASS  320 calls
+```
+
+结果与 `file://` 完全一致：**页面发出的资源请求数为 0**（favicon 也内联成 data URI，
+连浏览器自动请求的 `/favicon.ico` 都不再产生），控制台零异常。
+
+**验证脚本是真正的门禁**，不是只会打印报告：只要任何一次生成出现 FAIL 校验、
+加载超时，或控制台冒出 error/warning，脚本就以非零码退出。
+（这一点是补上去的 —— 原版无论如何都 `exit 0`，也就是说"PASS"只描述了 12 项生成校验，
+页面抛异常照样"通过"。现在往产物里注入一个 `console.error` 会被如实判为 FAIL。）
 
 ---
 
