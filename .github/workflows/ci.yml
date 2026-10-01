@@ -37,7 +37,7 @@ jobs:
       # loses every multi-byte character silently, and the terminal keeps
       # displaying it correctly, so nothing else in this pipeline would notice.
       - name: Encoding guard
-        run: python3 tools/repair-encoding.py --check
+        run: node tools/fix-encoding.mjs --check
 
       - name: Build single-file distribution
         run: node tools/build.mjs

@@ -118,7 +118,8 @@ correct Chinese while the file on disk is incorrect. The damage is only visible
 to a tool that reads the file as UTF-8 — a browser, a compiler, or Python:
 
 ```bash
-python tools/repair-encoding.py     # repairs known damage; verifies and is idempotent
+npm run check:encoding     # sweeps every text file; runs as part of npm test
+npm run fix:encoding       # repairs the known sequences, then verifies
 ```
 
 Use the `edit`/`write` tools, or Node, to modify these files. If you must use
