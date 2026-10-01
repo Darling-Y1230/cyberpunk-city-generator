@@ -14,6 +14,7 @@ import path from 'node:path';
 import url from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { fetchChecked } from './lib/net.mjs';
+import { WIN, ESBUILD_REL, ESBUILD_DEST, esbuildPackage } from './lib/esbuild-path.mjs';
 
 const ROOT = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
 const CACHE = path.join(ROOT, '.deps');
@@ -21,19 +22,6 @@ const VENDOR = path.join(ROOT, 'vendor');
 
 const THREE_VERSION = '0.160.1';
 const ESBUILD_VERSION = '0.20.2';
-const WIN = process.platform === 'win32';
-
-/** esbuild ships as a per-platform binary package. */
-function esbuildPackage() {
-  const p = process.platform, a = process.arch;
-  if (p === 'win32' && a === 'arm64') return '@esbuild/win32-arm64';
-  if (p === 'win32') return '@esbuild/win32-x64';
-  if (p === 'darwin' && a === 'arm64') return '@esbuild/darwin-arm64';
-  if (p === 'darwin') return '@esbuild/darwin-x64';
-  if (p === 'linux' && a === 'arm64') return '@esbuild/linux-arm64';
-  if (p === 'linux') return '@esbuild/linux-x64';
-  throw new Error(`no prebuilt esbuild for ${p}/${a}`);
-}
 
 const ESBUILD_PKG = esbuildPackage();
 const ESBUILD_NAME = ESBUILD_PKG.split('/')[1];
@@ -51,8 +39,11 @@ const TARGETS = [
     label: `esbuild ${ESBUILD_VERSION} (${ESBUILD_PKG})`,
     file: `${ESBUILD_NAME}-${ESBUILD_VERSION}.tgz`,
     url: `https://registry.npmjs.org/${ESBUILD_PKG}/-/${ESBUILD_NAME}-${ESBUILD_VERSION}.tgz`,
-    dest: path.join(VENDOR, 'esbuild'),
-    keep: path.join(VENDOR, 'esbuild', 'package', WIN ? 'esbuild.exe' : 'bin/esbuild'),
+    dest: ESBUILD_DEST,
+    // tools/lib/esbuild-path.mjs is the single source of truth for this: the
+    // Windows package ships esbuild.exe at the root, every other platform ships
+    // bin/esbuild. Hard-coding it in the consumers is what would have broken CI.
+    keep: path.join(ESBUILD_DEST, 'package', ESBUILD_REL),
   },
 ];
 

@@ -6,9 +6,9 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
+import { ESBUILD } from './lib/esbuild-path.mjs';
 
 const ROOT = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
-const ESBUILD = path.join(ROOT, 'vendor', 'esbuild', 'package', 'esbuild.exe');
 const THREE = path.join(ROOT, 'vendor', 'three', 'package', 'build', 'three.module.js');
 const THREE_ADDONS = path.join(ROOT, 'vendor', 'three', 'package', 'examples', 'jsm');
 
