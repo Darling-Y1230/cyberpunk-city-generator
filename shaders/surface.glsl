@@ -1,5 +1,5 @@
 // =====================================================================
-//  surface.glsl 鈥?buildings, megastructures, transit, props.
+//  surface.glsl — buildings, megastructures, transit, props.
 //  One material family, several modes, driven by per-vertex attributes.
 //
 //   mode 0 : curtain-wall tower      (window grid, setbacks, spires)
@@ -181,11 +181,11 @@ void main() {
 
   vec3 col = albedo * (sun + amb) * canyonAO;
 
-  // The city lights itself: every fa莽ade is lit by a hundred thousand tubes it
+  // The city lights itself: every façade is lit by a hundred thousand tubes it
   // never sees. Without this term the massing reads as black silhouettes.
   col += albedo * uCityGlow * mix(0.50, 1.0, canyonAO);
 
-  // neon bounce 鈥?the dominant local light source of the street
+  // neon bounce — the dominant local light source of the street
   col += albedo * neonLights(vWorld, N, rough, 1.0) * canyonAO * uNeonGain;
 
   // window emission (linear HDR, feeds the bloom pass)

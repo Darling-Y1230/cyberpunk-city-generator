@@ -81,7 +81,7 @@ These are enforced by the validator and by the brief:
 
 | You want to… | Start here |
 |---|---|
-| rebalance districts, heights, lot sizes | `config.json` → see [docs/CONFIG.md](CONFIG.md) |
+| rebalance districts, heights, lot sizes | `config.json` → see [docs/CONFIG.md](docs/CONFIG.md) |
 | change how the city is planned | `src/gen/planner.js` |
 | change street hierarchy or block sizes | `src/gen/roads.js`, `config.roads.levels` |
 | change building shapes | `models/buildings.js` (massing) vs `src/gen/buildings.js` (placement) |
@@ -97,13 +97,38 @@ These are enforced by the validator and by the brief:
 
 ---
 
-## Two traps worth knowing about
+## Three traps worth knowing about
 
 **UTF-8 BOM.** A BOM in a `.glsl` file becomes an illegal first character and
 breaks every shader that includes it — with an error that points at the wrong
 line. On Windows, `Set-Content -Encoding UTF8` writes a BOM. Use
 `[IO.File]::WriteAllText($p, $s, (New-Object System.Text.UTF8Encoding($false)))`,
 or run `node tools/strip-bom.mjs`.
+
+**Never round-trip a UTF-8 file through a PowerShell text pipeline.** This is not
+hypothetical: it silently corrupted 53 characters across nine files in this
+repository. `Get-Content -Raw` decodes using the console's active code page
+(CP936/GBK on a Chinese Windows install), so `—` becomes `鈥?`, `façade` becomes
+`façade`, and 霓虹 becomes `闇撳彣`. `Set-Content`/`WriteAllText` then writes that
+back as UTF-8 and the original bytes are gone.
+
+The part that makes it dangerous is that **it looks fine**. PowerShell decodes
+the damaged file the same wrong way on the way out, so the terminal shows you
+correct Chinese while the file on disk is incorrect. The damage is only visible
+to a tool that reads the file as UTF-8 — a browser, a compiler, or Python:
+
+```bash
+python tools/repair-encoding.py     # repairs known damage; verifies and is idempotent
+```
+
+Use the `edit`/`write` tools, or Node, to modify these files. If you must use
+PowerShell, read and write with an explicit encoding:
+
+```powershell
+$s = [IO.File]::ReadAllText($p, [Text.UTF8Encoding]::new($false))
+# ... modify $s ...
+[IO.File]::WriteAllText($p, $s, [Text.UTF8Encoding]::new($false))
+```
 
 **`String.replace` and `$`.** `tools/build.mjs` inlines the bundle into the HTML
 shell. Minified JavaScript is full of `` $` `` and `$'`, which `String.replace`

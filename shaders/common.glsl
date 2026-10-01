@@ -1,5 +1,5 @@
 // =====================================================================
-//  common.glsl 鈥?shared GLSL chunks for every NEO-KOWLOON material.
+//  common.glsl — shared GLSL chunks for every NEO-KOWLOON material.
 //  Included via `#include "common"` and inlined by tools/build-shaders.mjs
 // =====================================================================
 
@@ -19,7 +19,7 @@ uniform float uFogFalloff;
 uniform vec3  uSkyUp;
 uniform vec3  uSkyDown;
 // Integrated artificial light of the whole city. A real megacity is an
-// integrating sphere: every fa莽ade is lit by a hundred thousand tubes it never
+// integrating sphere: every façade is lit by a hundred thousand tubes it never
 // sees. Without this the masses read as black silhouettes at night.
 uniform vec3  uCityGlow;
 uniform vec3  uSunDir;
@@ -63,7 +63,7 @@ vec3 hsv2rgb(vec3 c) {
 vec3 srgbToLinear(vec3 c) { return pow(max(c, 0.0), vec3(2.2)); }
 
 // ---------------------------------------------------------------- neon point pool
-// 12-ish closest闇撹櫣 emitters are uploaded each frame and shaded per-pixel.
+// 12-ish closest霓虹 emitters are uploaded each frame and shaded per-pixel.
 vec3 neonLights(vec3 wp, vec3 n, float rough, float gain) {
   vec3 acc = vec3(0.0);
   for (int i = 0; i < NEON_MAX; i++) {

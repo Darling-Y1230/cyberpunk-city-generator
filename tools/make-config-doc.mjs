@@ -1,4 +1,4 @@
-// tools/make-config-doc.mjs 鈥?generates docs/CONFIG.md from config.json.
+// tools/make-config-doc.mjs — generates docs/CONFIG.md from config.json.
 //
 // config.json is the single source of truth for every tunable in the generator.
 // Hand-written reference docs drift within a week, so this one is generated:
@@ -18,8 +18,8 @@ const DOC = {
   'world.seaLevel': 'World Y of the waterline. Terrain below this is sea.',
   'world.maxTerrainHeight': 'Upper bound for the surrounding hills, so the horizon never dwarfs the city.',
   'world.shoreWidth': 'Width of the beach/quay transition band along the coast.',
-  'world.cellSize': 'Planning raster resolution. **Every** overlap guarantee in the project is enforced on this grid 鈥?roads, water, building footprints and collision all read it. Raising it makes the city coarser and the guarantees still hold; lowering it costs memory quadratically.',
-  'world.lotMargin': 'Total gap between neighbouring building footprints. This is what keeps adjacent fa莽ades from producing coplanar z-fighting.',
+  'world.cellSize': 'Planning raster resolution. **Every** overlap guarantee in the project is enforced on this grid — roads, water, building footprints and collision all read it. Raising it makes the city coarser and the guarantees still hold; lowering it costs memory quadratically.',
+  'world.lotMargin': 'Total gap between neighbouring building footprints. This is what keeps adjacent façades from producing coplanar z-fighting.',
   'world.wallHeight': 'Height of the perimeter blast wall. The wall is what stops the map edge from reading as a cut.',
   'world.skyCeiling': 'Highest altitude the fly camera may reach.',
 
@@ -29,7 +29,7 @@ const DOC = {
   'planner.transitWeight': 'How much arterial/maglev accessibility feeds back into land value.',
   'planner.nuisanceWeight': 'How hard industry, the port and power generation push land value down.',
   'planner.smoothingPasses': 'Majority-filter passes over the zoning raster. This is what makes district borders contiguous instead of noisy.',
-  'planner.minDistrictArea': 'Hard floor, in m虏, for every one of the sixteen zones. The planner grows a blob for any zone below it and reports a failure if it still cannot comply.',
+  'planner.minDistrictArea': 'Hard floor, in m², for every one of the sixteen zones. The planner grows a blob for any zone below it and reports a failure if it still cannot comply.',
   'planner.coastBias': 'How strongly the coastline is allowed to wander from its base radius.',
 
   'districts.specs.*.hMin': 'Minimum building height for this zone, metres.',
@@ -54,7 +54,7 @@ const DOC = {
   'transit.viaduct.deckY': 'Deck height above ground for the elevated highway.',
   'transit.maglev.beamY': 'Height of the maglev guideway beam.',
   'transit.maglev.speed': 'Train speed, m/s.',
-  'transit.skybridge.maxSpan': 'Longest gap a skybridge may span, metres. Only placed between two real structures 鈥?nothing floats.',
+  'transit.skybridge.maxSpan': 'Longest gap a skybridge may span, metres. Only placed between two real structures — nothing floats.',
   'transit.airLane.minY': 'Floor of the air-taxi corridor band, metres.',
   'transit.airLane.maxY': 'Ceiling of the air-taxi corridor band, metres.',
   'transit.droneLane.minY': 'Floor of the delivery-drone band, metres.',
@@ -62,23 +62,23 @@ const DOC = {
   'corporations.count': 'How many super-corporations to found. Each gets an HQ, an advertising network, R&D, staff housing and private security.',
   'corporations.territoryRadius': 'Base radius, metres, of a corporation\'s Voronoi territory.',
 
-  'lighting.defaultTime': 'Starting hour of the day, 0鈥?4. The city is authored for the night.',
+  'lighting.defaultTime': 'Starting hour of the day, 0–24. The city is authored for the night.',
   'lighting.artificialRatio': 'Target share of illumination that is artificial. The brief asks for 95 %.',
   'lighting.dynamicLightPool': 'How many emitters are uploaded to the shader each frame. The city has tens of thousands; the shader shades this many per pixel. Raising it costs fragment time linearly.',
-  'lighting.neonPalette': 'The mandated neon colour ratio (blue 35 / purple 25 / cyan 20 / pink 15 / red 5). Enforced by drawing from a shuffled bag with exactly those proportions, not by independent weighted draws 鈥?independent draws land 10+ points off over a few thousand emitters.',
+  'lighting.neonPalette': 'The mandated neon colour ratio (blue 35 / purple 25 / cyan 20 / pink 15 / red 5). Enforced by drawing from a shuffled bag with exactly those proportions, not by independent weighted draws — independent draws land 10+ points off over a few thousand emitters.',
 
   'ads.atlasCols': 'Advertising atlas grid. The whole ad network is one texture; every billboard is an instance that picks a tile.',
-  'ads.tileW': 'Atlas tile size in pixels. The tiles are painted procedurally at load time 鈥?there are no image files in this project.',
+  'ads.tileW': 'Atlas tile size in pixels. The tiles are painted procedurally at load time — there are no image files in this project.',
   'ads.holoShare': 'Fraction of signs promoted to volumetric holograms.',
 
-  'npc.count': 'Population. Simulated entirely in the vertex shader from a baked path atlas 鈥?the CPU never touches an individual agent.',
+  'npc.count': 'Population. Simulated entirely in the vertex shader from a baked path atlas — the CPU never touches an individual agent.',
   'npc.countRange': 'Clamp for the population slider.',
-  'npc.pathPoints': 'Waypoints per baked path. Must stay 鈮?16: the crowd vertex shader unrolls this loop.',
+  'npc.pathPoints': 'Waypoints per baked path. Must stay ≤ 16: the crowd vertex shader unrolls this loop.',
   'npc.maxPaths': 'How many distinct walks to bake into the path texture.',
   'npc.nearCount': 'Size of the articulated low-poly tier that follows the camera. The rest of the crowd is drawn as SDF billboards.',
 
   'weather.types.*.fog': 'Fog density. Drives visibility far more than draw distance does.',
-  'weather.types.*.rain': 'Precipitation amount, 0鈥?. Scales the live particle count.',
+  'weather.types.*.rain': 'Precipitation amount, 0–1. Scales the live particle count.',
   'weather.types.*.wet': 'Surface wetness. Feeds the planar reflection strength and the puddle mask in the road shader, so weather changes what you see reflected, not just how grey it is.',
   'weather.types.*.sun': 'Attenuation applied to the sun/moon term.',
   'weather.transitionSeconds': 'Blend time between weather states. States cross-fade; they never snap.',

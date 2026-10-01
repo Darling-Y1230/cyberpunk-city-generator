@@ -6,11 +6,11 @@ import { clamp } from '../core/grid.js';
 /**
  * The two volumetric districts.
  *
- * AERIAL CONCESSIONS (绌轰腑鍩庡尯) 鈥?cantilevered decks that genuinely bear on the
+ * AERIAL CONCESSIONS (空中城区) — cantilevered decks that genuinely bear on the
  * tower cores beneath them: every platform overlaps its host structure and is
  * carried by columns and diagonal trusses, so nothing hovers.
  *
- * THE SUBNET (鍦颁笅鍩庡尯) 鈥?a service grid of tunnels running under the arterial
+ * THE SUBNET (地下城区) — a service grid of tunnels running under the arterial
  * alignments with carved caverns for the black market, illegal clinics, data
  * bourses and bars, reached by lift shafts that break the surface at real
  * street corners.
@@ -21,14 +21,14 @@ export function generateVertical(cfg, rng, plan, roads, buildings, chunks, trans
   return { sky, underground };
 }
 
-/** CSS hsl() string 鈥?the light pool accepts anything THREE.Color can parse. */
+/** CSS hsl() string — the light pool accepts anything THREE.Color can parse. */
 function hslHex(h, s, l) {
   const deg = Math.round((((h % 1) + 1) % 1) * 360);
   return `hsl(${deg} ${Math.round(s * 100)}% ${Math.round(l * 100)}%)`;
 }
 
 /* ==================================================================== *
- * 绌轰腑鍩庡尯
+ * 空中城区
  * ==================================================================== */
 function buildSkyDistrict(cfg, rng, plan, buildings, chunks, transit) {
   const platforms = [];
@@ -217,7 +217,7 @@ function buildSkyDistrict(cfg, rng, plan, buildings, chunks, transit) {
 }
 
 /* ==================================================================== *
- * 鍦颁笅鍩庡尯
+ * 地下城区
  * ==================================================================== */
 function buildUnderground(cfg, rng, plan, roads, buildings, chunks) {
   const depth = -26;
@@ -227,7 +227,7 @@ function buildUnderground(cfg, rng, plan, roads, buildings, chunks) {
   const neonSources = [];
   let floorArea = 0;
 
-  // pick the arterials that will carry the service tunnels 鈥?utilities follow
+  // pick the arterials that will carry the service tunnels — utilities follow
   // the same alignments as the streets above, which is why they are straight
   const mains = [...roads.xLines, ...roads.zLines]
     .filter((l) => l.level <= 2 && Math.hypot((l.x0 + l.x1) / 2, (l.z0 + l.z1) / 2) < plan.Rc * 0.9)
@@ -278,13 +278,13 @@ function buildUnderground(cfg, rng, plan, roads, buildings, chunks) {
 
   /* ---- caverns: the actual district content ---- */
   const PROGRAM = [
-    { id: 'market', label: '榛戝競 BLACK MARKET', w: [26, 54], d: [24, 46], h: 7.5, neon: 1.6 },
-    { id: 'lab', label: '闈炴硶瀹為獙瀹?CLANDESTINE LAB', w: [16, 30], d: [16, 28], h: 5.0, neon: 0.9 },
-    { id: 'data', label: '鏁版嵁浜ゆ槗涓績 DATA BOURSE', w: [18, 34], d: [18, 30], h: 5.5, neon: 1.2 },
-    { id: 'bar', label: '鍦颁笅閰掑惂 UNDERGROUND BAR', w: [14, 26], d: [14, 24], h: 4.6, neon: 1.9 },
-    { id: 'clinic', label: '涔変綋璇婃墍 RIPPERDOC', w: [12, 22], d: [12, 20], h: 4.4, neon: 1.1 },
-    { id: 'shrine', label: '绁為緵 SHRINE', w: [8, 14], d: [8, 14], h: 5.0, neon: 0.8 },
-    { id: 'farm', label: '鍨傜洿鍐滃満 VERTICAL FARM', w: [20, 40], d: [18, 34], h: 8.0, neon: 0.6 },
+    { id: 'market', label: '黑市 BLACK MARKET', w: [26, 54], d: [24, 46], h: 7.5, neon: 1.6 },
+    { id: 'lab', label: '非法实验室 CLANDESTINE LAB', w: [16, 30], d: [16, 28], h: 5.0, neon: 0.9 },
+    { id: 'data', label: '数据交易中心 DATA BOURSE', w: [18, 34], d: [18, 30], h: 5.5, neon: 1.2 },
+    { id: 'bar', label: '地下酒吧 UNDERGROUND BAR', w: [14, 26], d: [14, 24], h: 4.6, neon: 1.9 },
+    { id: 'clinic', label: '义体诊所 RIPPERDOC', w: [12, 22], d: [12, 20], h: 4.4, neon: 1.1 },
+    { id: 'shrine', label: '神龛 SHRINE', w: [8, 14], d: [8, 14], h: 5.0, neon: 0.8 },
+    { id: 'farm', label: '垂直农场 VERTICAL FARM', w: [20, 40], d: [18, 34], h: 8.0, neon: 0.6 },
   ];
 
   // seed caverns along the tunnel network
@@ -331,7 +331,7 @@ function buildUnderground(cfg, rng, plan, roads, buildings, chunks) {
     }
 
     rooms.push({ id: prog.id, label: prog.label, x, z, w, d, h: prog.h, y: depth, neon: prog.neon });
-    // The subnet is lit entirely by its own fixtures 鈥?without these the whole
+    // The subnet is lit entirely by its own fixtures — without these the whole
     // district renders as an unlit grey box, which is exactly what it did.
     for (let s = 0; s < 3; s++) {
       neonSources.push({

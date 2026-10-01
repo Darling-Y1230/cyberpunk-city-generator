@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { fetchChecked } from './lib/net.mjs';
 
 const ROOT = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
 const CACHE = path.join(ROOT, '.deps');
@@ -66,7 +67,7 @@ async function download(t) {
   const out = path.join(CACHE, t.file);
   if (fs.existsSync(out) && fs.statSync(out).size > 10000) return out;
   process.stdout.write(`  downloading ${t.label} ... `);
-  const res = await fetch(t.url, { redirect: 'follow' });
+  const res = await fetchChecked(t.url, { redirect: 'follow' });
   if (!res.ok) throw new Error(`${t.url} -> HTTP ${res.status}`);
   const buf = Buffer.from(await res.arrayBuffer());
   fs.mkdirSync(CACHE, { recursive: true });

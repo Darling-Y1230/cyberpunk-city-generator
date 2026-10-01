@@ -88,8 +88,8 @@ so an undocumented knob is still a visible knob.
 | `seaLevel` | `0` | World Y of the waterline. Terrain below this is sea. |
 | `maxTerrainHeight` | `46` | Upper bound for the surrounding hills, so the horizon never dwarfs the city. |
 | `shoreWidth` | `90` | Width of the beach/quay transition band along the coast. |
-| `cellSize` | `4` | Planning raster resolution. **Every** overlap guarantee in the project is enforced on this grid 鈥?roads, water, building footprints and collision all read it. Raising it makes the city coarser and the guarantees still hold; lowering it costs memory quadratically. |
-| `lotMargin` | `0.75` | Total gap between neighbouring building footprints. This is what keeps adjacent fa莽ades from producing coplanar z-fighting. |
+| `cellSize` | `4` | Planning raster resolution. **Every** overlap guarantee in the project is enforced on this grid — roads, water, building footprints and collision all read it. Raising it makes the city coarser and the guarantees still hold; lowering it costs memory quadratically. |
+| `lotMargin` | `0.75` | Total gap between neighbouring building footprints. This is what keeps adjacent façades from producing coplanar z-fighting. |
 | `wallHeight` | `34` | Height of the perimeter blast wall. The wall is what stops the map edge from reading as a cut. |
 | `skyCeiling` | `700` | Highest altitude the fly camera may reach. |
 
@@ -102,7 +102,7 @@ so an undocumented knob is still a visible knob.
 | `transitWeight` | `0.22` | How much arterial/maglev accessibility feeds back into land value. |
 | `nuisanceWeight` | `0.5` | How hard industry, the port and power generation push land value down. |
 | `smoothingPasses` | `4` | Majority-filter passes over the zoning raster. This is what makes district borders contiguous instead of noisy. |
-| `minDistrictArea` | `900` | Hard floor, in m虏, for every one of the sixteen zones. The planner grows a blob for any zone below it and reports a failure if it still cannot comply. |
+| `minDistrictArea` | `900` | Hard floor, in m², for every one of the sixteen zones. The planner grows a blob for any zone below it and reports a failure if it still cannot comply. |
 | `coastBias` | `0.62` | How strongly the coastline is allowed to wander from its base radius. |
 
 ##### `districts.specs.cbd`
@@ -407,7 +407,7 @@ so an undocumented knob is still a visible knob.
 | key | value | meaning |
 |---|---|---|
 | `enabled` | `true` |  |
-| `maxSpan` | `118` | Longest gap a skybridge may span, metres. Only placed between two real structures 鈥?nothing floats. |
+| `maxSpan` | `118` | Longest gap a skybridge may span, metres. Only placed between two real structures — nothing floats. |
 | `maxHeightDelta` | `46` |  |
 | `minY` | `22` |  |
 | `maxCount` | `190` |  |
@@ -459,7 +459,7 @@ so an undocumented knob is still a visible knob.
 
 | key | value | meaning |
 |---|---|---|
-| `defaultTime` | `22.4` | Starting hour of the day, 0鈥?4. The city is authored for the night. |
+| `defaultTime` | `22.4` | Starting hour of the day, 0–24. The city is authored for the night. |
 | `artificialRatio` | `0.95` | Target share of illumination that is artificial. The brief asks for 95 %. |
 | `dynamicLightPool` | `18` | How many emitters are uploaded to the shader each frame. The city has tens of thousands; the shader shades this many per pixel. Raising it costs fragment time linearly. |
 | `dynamicLightRadius` | `46` |  |
@@ -485,7 +485,7 @@ so an undocumented knob is still a visible knob.
 |---|---|---|
 | `atlasCols` | `6` | Advertising atlas grid. The whole ad network is one texture; every billboard is an instance that picks a tile. |
 | `atlasRows` | `4` |  |
-| `tileW` | `512` | Atlas tile size in pixels. The tiles are painted procedurally at load time 鈥?there are no image files in this project. |
+| `tileW` | `512` | Atlas tile size in pixels. The tiles are painted procedurally at load time — there are no image files in this project. |
 | `tileH` | `256` |  |
 | `holoShare` | `0.22` | Fraction of signs promoted to volumetric holograms. |
 | `dynamic` | `true` |  |
@@ -494,8 +494,8 @@ so an undocumented knob is still a visible knob.
 
 | key | value | meaning |
 |---|---|---|
-| `count` | `9000` | Population. Simulated entirely in the vertex shader from a baked path atlas 鈥?the CPU never touches an individual agent. |
-| `pathPoints` | `12` | Waypoints per baked path. Must stay 鈮?16: the crowd vertex shader unrolls this loop. |
+| `count` | `9000` | Population. Simulated entirely in the vertex shader from a baked path atlas — the CPU never touches an individual agent. |
+| `pathPoints` | `12` | Waypoints per baked path. Must stay ≤ 16: the crowd vertex shader unrolls this loop. |
 | `maxPaths` | `2600` | How many distinct walks to bake into the path texture. |
 | `nearCount` | `700` | Size of the articulated low-poly tier that follows the camera. The rest of the crowd is drawn as SDF billboards. |
 | `nearRadius` | `150` |  |
@@ -541,7 +541,7 @@ so an undocumented knob is still a visible knob.
 |---|---|---|
 | `label` | `"晴天 CLEAR"` |  |
 | `fog` | `0.00055` | Fog density. Drives visibility far more than draw distance does. |
-| `rain` | `0` | Precipitation amount, 0鈥?. Scales the live particle count. |
+| `rain` | `0` | Precipitation amount, 0–1. Scales the live particle count. |
 | `cloud` | `0.05` |  |
 | `sun` | `1` | Attenuation applied to the sun/moon term. |
 | `wet` | `0.06` | Surface wetness. Feeds the planar reflection strength and the puddle mask in the road shader, so weather changes what you see reflected, not just how grey it is. |
@@ -554,7 +554,7 @@ so an undocumented knob is still a visible knob.
 |---|---|---|
 | `label` | `"阴天 OVERCAST"` |  |
 | `fog` | `0.0011` | Fog density. Drives visibility far more than draw distance does. |
-| `rain` | `0` | Precipitation amount, 0鈥?. Scales the live particle count. |
+| `rain` | `0` | Precipitation amount, 0–1. Scales the live particle count. |
 | `cloud` | `0.72` |  |
 | `sun` | `0.45` | Attenuation applied to the sun/moon term. |
 | `wet` | `0.18` | Surface wetness. Feeds the planar reflection strength and the puddle mask in the road shader, so weather changes what you see reflected, not just how grey it is. |
@@ -567,7 +567,7 @@ so an undocumented knob is still a visible knob.
 |---|---|---|
 | `label` | `"雨天 RAIN"` |  |
 | `fog` | `0.00165` | Fog density. Drives visibility far more than draw distance does. |
-| `rain` | `0.42` | Precipitation amount, 0鈥?. Scales the live particle count. |
+| `rain` | `0.42` | Precipitation amount, 0–1. Scales the live particle count. |
 | `cloud` | `0.88` |  |
 | `sun` | `0.28` | Attenuation applied to the sun/moon term. |
 | `wet` | `0.82` | Surface wetness. Feeds the planar reflection strength and the puddle mask in the road shader, so weather changes what you see reflected, not just how grey it is. |
@@ -580,7 +580,7 @@ so an undocumented knob is still a visible knob.
 |---|---|---|
 | `label` | `"暴雨 STORM"` |  |
 | `fog` | `0.00285` | Fog density. Drives visibility far more than draw distance does. |
-| `rain` | `1` | Precipitation amount, 0鈥?. Scales the live particle count. |
+| `rain` | `1` | Precipitation amount, 0–1. Scales the live particle count. |
 | `cloud` | `1` |  |
 | `sun` | `0.14` | Attenuation applied to the sun/moon term. |
 | `wet` | `1` | Surface wetness. Feeds the planar reflection strength and the puddle mask in the road shader, so weather changes what you see reflected, not just how grey it is. |
@@ -594,7 +594,7 @@ so an undocumented knob is still a visible knob.
 |---|---|---|
 | `label` | `"雾天 FOG"` |  |
 | `fog` | `0.0062` | Fog density. Drives visibility far more than draw distance does. |
-| `rain` | `0` | Precipitation amount, 0鈥?. Scales the live particle count. |
+| `rain` | `0` | Precipitation amount, 0–1. Scales the live particle count. |
 | `cloud` | `0.6` |  |
 | `sun` | `0.3` | Attenuation applied to the sun/moon term. |
 | `wet` | `0.34` | Surface wetness. Feeds the planar reflection strength and the puddle mask in the road shader, so weather changes what you see reflected, not just how grey it is. |
@@ -607,7 +607,7 @@ so an undocumented knob is still a visible knob.
 |---|---|---|
 | `label` | `"酸雨 ACID RAIN"` |  |
 | `fog` | `0.0023` | Fog density. Drives visibility far more than draw distance does. |
-| `rain` | `0.55` | Precipitation amount, 0鈥?. Scales the live particle count. |
+| `rain` | `0.55` | Precipitation amount, 0–1. Scales the live particle count. |
 | `cloud` | `0.95` |  |
 | `sun` | `0.18` | Attenuation applied to the sun/moon term. |
 | `wet` | `0.9` | Surface wetness. Feeds the planar reflection strength and the puddle mask in the road shader, so weather changes what you see reflected, not just how grey it is. |
@@ -621,7 +621,7 @@ so an undocumented knob is still a visible knob.
 |---|---|---|
 | `label` | `"沙尘 SANDSTORM"` |  |
 | `fog` | `0.0048` | Fog density. Drives visibility far more than draw distance does. |
-| `rain` | `0` | Precipitation amount, 0鈥?. Scales the live particle count. |
+| `rain` | `0` | Precipitation amount, 0–1. Scales the live particle count. |
 | `cloud` | `0.8` |  |
 | `sun` | `0.22` | Attenuation applied to the sun/moon term. |
 | `wet` | `0.02` | Surface wetness. Feeds the planar reflection strength and the puddle mask in the road shader, so weather changes what you see reflected, not just how grey it is. |

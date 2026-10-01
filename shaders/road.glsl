@@ -1,5 +1,5 @@
 // =====================================================================
-//  road.glsl 鈥?street surface, sidewalks, lots, wasteland, water, decks.
+//  road.glsl — street surface, sidewalks, lots, wasteland, water, decks.
 //  Planar-reflection aware: the generator owns a mirrored render pass and
 //  hands this material a texture matrix, so wet asphalt actually mirrors the
 //  neon above it instead of faking it.
@@ -108,7 +108,7 @@ void main() {
     albedo *= 1.0 - 0.5 * cracks;
     rough = 0.96;
   } else if (uMode == 3) {
-    // harbour water 鈥?animated normals, oil film, reflected skyline
+    // harbour water — animated normals, oil film, reflected skyline
     vec2 w = uv * 0.06;
     float n1 = fbm(w + vec2(uTime * 0.035, uTime * 0.021), 4);
     float n2 = fbm(w * 2.7 - vec2(uTime * 0.055, uTime * 0.012), 3);

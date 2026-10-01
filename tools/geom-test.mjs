@@ -1,4 +1,4 @@
-// tools/geom-test.mjs 鈥?builds every procedural mesh in Node and reports any
+// tools/geom-test.mjs — builds every procedural mesh in Node and reports any
 // non-finite vertex. Catches NaN geometry at the source instead of through a
 // screenshot, and runs in a second.
 import * as THREE from 'three';
