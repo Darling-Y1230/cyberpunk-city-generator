@@ -42,11 +42,18 @@ jobs:
           cp -r docs/img _site/img 2>/dev/null || true
           ls -lh _site
 
-      # enablement: true lets this step turn Pages on itself, via the workflow's
-      # pages: write permission. Without it the step fails with "Get Pages site
-      # failed: Not Found" on any repository where nobody has opened
-      # Settings -> Pages yet, which is exactly the state of a freshly created
-      # repository — so the first deploy would always fail until someone did it.
+      # enablement: true asks this step to turn Pages on itself, using the
+      # workflow's pages: write permission. It is the documented way to make a
+      # fresh repository deploy without anyone opening Settings first.
+      #
+      # NOTE: on this repository it did NOT succeed — the run still fails here
+      # with the Pages API returning 404, and the step logs need authentication
+      # to read. Two settings are worth checking if the deploy keeps failing:
+      #   Settings -> Pages -> Source: GitHub Actions
+      #   Settings -> Actions -> General -> Workflow permissions
+      #                              (must not be read-only, or a workflow
+      #                               cannot grant itself pages: write)
+      # Everything before this step passes: checkout, fetch, build, assemble.
       - uses: actions/configure-pages@v5
         with:
           enablement: true
