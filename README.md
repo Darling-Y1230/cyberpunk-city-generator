@@ -8,7 +8,7 @@
 一座公元 2080–2150 年间的未来超级都市，完全由代码生成 —— 每次都不同。
 
 [![Live demo](https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E8%AF%95%E7%8E%A9-LIVE_DEMO-ff3fa4?style=for-the-badge)](https://darling-y1230.github.io/cyberpunk-city-generator/)
-[![Download](https://img.shields.io/badge/%E2%AC%87_%E4%B8%8B%E8%BD%BD-964_KB_%E5%8D%95%E6%96%87%E4%BB%B6-20e6d6?style=for-the-badge)](../../releases/latest)
+[![Download](https://img.shields.io/badge/%E2%AC%87_%E4%B8%8B%E8%BD%BD-964_KB_%E5%8D%95%E6%96%87%E4%BB%B6-20e6d6?style=for-the-badge)](dist/cyberpunk-city.html)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-2f7bff.svg?style=flat-square)](LICENSE)
 [![three.js](https://img.shields.io/badge/three.js-r160-a83cff.svg?style=flat-square)](https://threejs.org)
