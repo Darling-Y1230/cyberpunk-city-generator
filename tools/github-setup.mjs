@@ -26,7 +26,7 @@ const DRY = argv.includes('--dry-run');
 
 const PAGES = `https://${USER.toLowerCase()}.github.io/${REPO}/`;
 const DESCRIPTION = 'Procedural cyberpunk mega-city generator - real urban planning, '
-  + 'GPU crowd simulation and neon rendering in one self-contained 961 KB HTML file. '
+  + 'GPU crowd simulation and neon rendering in one self-contained 962 KB HTML file. '
   + 'No runtime dependencies, works offline.';
 
 // 20 topics: the single highest-leverage discoverability lever on GitHub.
