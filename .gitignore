@@ -22,6 +22,9 @@
 /dist/*
 !/dist/cyberpunk-city.html
 
+# Assembled GitHub Pages site (tools/pages-check.mjs writes it; CI builds it fresh)
+/_site/
+
 # ---------------------------------------------------------------------------
 # Local / tooling
 # ---------------------------------------------------------------------------

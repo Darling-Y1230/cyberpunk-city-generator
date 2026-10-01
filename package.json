@@ -49,12 +49,14 @@
     "plan-test": "node tools/bundle-node-test.mjs tools/plan-test.mjs s1 s2 s3 s4 s5 b e",
     "check:encoding": "node tools/fix-encoding.mjs --check",
     "check:workflows": "node tools/validate-workflows.mjs",
+    "check:pages": "node tools/pages-check.mjs",
     "fix:encoding": "node tools/fix-encoding.mjs",
     "verify": "node tools/verify.mjs",
     "verify:offline": "node tools/verify.mjs --offline=1",
     "shots": "node tools/verify.mjs --clean=1 --stress=0 --seed2=0 --size=1024",
     "docs:img": "python tools/make-doc-images.py",
     "serve": "node tools/serve.mjs",
-    "serve:dev": "node tools/serve.mjs --dev"
+    "serve:dev": "node tools/serve.mjs --dev",
+    "serve:site": "node tools/serve.mjs --dir=_site"
   }
 }

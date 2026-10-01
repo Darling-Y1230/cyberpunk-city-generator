@@ -42,6 +42,11 @@ jobs:
       - name: Build single-file distribution
         run: node tools/build.mjs
 
+      # The Pages workflow only runs after a push, which is the worst time to find
+      # out that a file its metadata references is missing from the assembly.
+      - name: Pages deployment pre-check
+        run: node tools/pages-check.mjs
+
       - name: Report artefact size
         run: |
           ls -lh dist/cyberpunk-city.html
