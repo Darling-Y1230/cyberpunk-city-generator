@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# Dependencies: 52 MB, restored with one command, never committed.
+#
+#   vendor/three    ~30 MB  the rendering engine + its addons
+#   vendor/esbuild  ~9 MB   the bundler (a platform-specific binary)
+#   .deps           ~13 MB  the downloaded tarballs
+#
+# A fresh clone runs `node tools/fetch-deps.mjs` and gets all of it back.
+# ---------------------------------------------------------------------------
+/vendor/
+/.deps/
+/node_modules/
+
+# ---------------------------------------------------------------------------
+# Build output.
+#
+# dist/cyberpunk-city.html IS the product — a single self-contained HTML file
+# that anyone can download and double-click — so it is committed on purpose.
+# Everything else in dist/ is scratch: the intermediate bundle, raw capture
+# screenshots, and verification logs.
+# ---------------------------------------------------------------------------
+/dist/*
+!/dist/cyberpunk-city.html
+
+# ---------------------------------------------------------------------------
+# Local / tooling
+# ---------------------------------------------------------------------------
+.edge-profile/
+*.log
+__pycache__/
+*.pyc
+
+# editor + OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# scratch files produced while iterating
+/_scratch/
+/notes-*.md

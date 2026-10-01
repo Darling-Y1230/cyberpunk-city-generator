@@ -1,0 +1,57 @@
+{
+  "name": "cyberpunk-city-generator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Procedural cyberpunk mega-city generator — real urban planning, GPU crowd simulation and neon rendering in one self-contained HTML file. No runtime dependencies, works offline.",
+  "keywords": [
+    "procedural-generation",
+    "city-generator",
+    "procedural-city",
+    "cyberpunk",
+    "threejs",
+    "three-js",
+    "webgl",
+    "webgl2",
+    "glsl",
+    "shaders",
+    "urban-planning",
+    "generative-art",
+    "level-generation",
+    "game-development",
+    "3d",
+    "neon",
+    "sci-fi",
+    "single-file",
+    "offline",
+    "javascript"
+  ],
+  "homepage": "https://darling-y1230.github.io/cyberpunk-city-generator/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darling-Y1230/cyberpunk-city-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Darling-Y1230/cyberpunk-city-generator/issues"
+  },
+  "author": "Darling-Y1230",
+  "license": "MIT",
+  "main": "main.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "deps": "node tools/fetch-deps.mjs",
+    "assets": "node tools/build-assets.mjs",
+    "build": "node tools/build.mjs",
+    "test": "npm run geom-test && npm run plan-test",
+    "geom-test": "node tools/bundle-node-test.mjs tools/geom-test.mjs",
+    "plan-test": "node tools/bundle-node-test.mjs tools/plan-test.mjs s1 s2 s3 s4 s5 b e",
+    "verify": "node tools/verify.mjs",
+    "verify:offline": "node tools/verify.mjs --offline=1",
+    "shots": "node tools/verify.mjs --clean=1 --stress=0 --seed2=0 --size=1024",
+    "docs:img": "python tools/make-doc-images.py",
+    "serve": "node tools/serve.mjs",
+    "serve:dev": "node tools/serve.mjs --dev"
+  }
+}

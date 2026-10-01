@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # three.js and esbuild are not committed (52 MB, one of them a binary).
+      # This one script reproduces both from the npm registry using Node's own
+      # fetch, so no package manager is involved anywhere in this project.
+      - name: Fetch dependencies
+        run: node tools/fetch-deps.mjs
+
+      # Geometry sanity: builds every procedural mesh in Node and asserts that
+      # no vertex is non-finite. Catches NaN massing at the source instead of in
+      # a screenshot, and runs in about a second.
+      - name: Geometry test (no browser)
+        run: npm run geom-test
+
+      # Zoning sanity: runs Agent 1 across several seeds and all three map sizes
+      # and asserts that every one of the sixteen zones clears its minimum area.
+      - name: Zoning test (no browser)
+        run: npm run plan-test
+
+      - name: Build single-file distribution
+        run: node tools/build.mjs
+
+      - name: Report artefact size
+        run: |
+          ls -lh dist/cyberpunk-city.html
+          echo "---"
+          echo "Self-containment check (must be 0):"
+          grep -c 'src="http' dist/cyberpunk-city.html || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cyberpunk-city.html
+          path: dist/cyberpunk-city.html
+          retention-days: 14

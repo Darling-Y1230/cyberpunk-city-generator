@@ -1,0 +1,887 @@
+{
+  "$schema": "./config.schema.md",
+  "meta": {
+    "title": "NEO-KOWLOON 2087",
+    "subtitle": "Procedural Cyberpunk Mega-City Generator",
+    "version": "1.0.0",
+    "engine": "three.js r160"
+  },
+  "world": {
+    "mapSize": "random",
+    "mapSizeChoices": [
+      512,
+      1024,
+      2048
+    ],
+    "seaLevel": 0,
+    "maxTerrainHeight": 46,
+    "shoreWidth": 90,
+    "cellSize": 4,
+    "lotMargin": 0.75,
+    "wallHeight": 34,
+    "skyCeiling": 700
+  },
+  "planner": {
+    "subCenters": [
+      3,
+      5
+    ],
+    "landValueDecay": 340,
+    "waterfrontPremium": 0.34,
+    "transitWeight": 0.22,
+    "nuisanceWeight": 0.5,
+    "smoothingPasses": 4,
+    "minDistrictArea": 900,
+    "coastBias": 0.62
+  },
+  "districts": {
+    "order": [
+      "cbd",
+      "corporate",
+      "research",
+      "industrial",
+      "port",
+      "residential",
+      "luxury",
+      "slum",
+      "underground",
+      "sky",
+      "commercial",
+      "nightlife",
+      "medical",
+      "education",
+      "datacenter",
+      "energy"
+    ],
+    "specs": {
+      "cbd": {
+        "label": "中央商务区 CENTRAL BUSINESS DISTRICT",
+        "color": "#59e0ff",
+        "hMin": 200,
+        "hMax": 1200,
+        "sigma": 0.52,
+        "hMode": 330,
+        "lotW": [
+          30,
+          58
+        ],
+        "lotD": [
+          26,
+          50
+        ],
+        "density": 0.9,
+        "split": 0.34,
+        "neon": 1.35,
+        "ads": 12,
+        "walkable": true
+      },
+      "corporate": {
+        "label": "超级企业总部区 MEGA-CORP HEADQUARTERS",
+        "color": "#b07cff",
+        "hMin": 140,
+        "hMax": 880,
+        "sigma": 0.46,
+        "hMode": 240,
+        "lotW": [
+          34,
+          74
+        ],
+        "lotD": [
+          30,
+          64
+        ],
+        "density": 0.82,
+        "split": 0.38,
+        "neon": 1.15,
+        "ads": 10,
+        "walkable": true
+      },
+      "research": {
+        "label": "高科技研发区 R&D CAMPUS",
+        "color": "#67ffd4",
+        "hMin": 40,
+        "hMax": 320,
+        "sigma": 0.44,
+        "hMode": 96,
+        "lotW": [
+          26,
+          54
+        ],
+        "lotD": [
+          24,
+          48
+        ],
+        "density": 0.66,
+        "split": 0.44,
+        "neon": 0.9,
+        "ads": 6,
+        "walkable": true
+      },
+      "industrial": {
+        "label": "工业制造区 INDUSTRIAL MANUFACTURING",
+        "color": "#ff9a52",
+        "hMin": 12,
+        "hMax": 140,
+        "sigma": 0.5,
+        "hMode": 34,
+        "lotW": [
+          34,
+          74
+        ],
+        "lotD": [
+          30,
+          66
+        ],
+        "density": 0.55,
+        "split": 0.58,
+        "neon": 0.55,
+        "ads": 3,
+        "walkable": true
+      },
+      "port": {
+        "label": "港口物流区 PORT & LOGISTICS",
+        "color": "#4fd2a8",
+        "hMin": 8,
+        "hMax": 110,
+        "sigma": 0.55,
+        "hMode": 22,
+        "lotW": [
+          40,
+          96
+        ],
+        "lotD": [
+          34,
+          84
+        ],
+        "density": 0.46,
+        "split": 0.64,
+        "neon": 0.6,
+        "ads": 3,
+        "walkable": true
+      },
+      "residential": {
+        "label": "普通住宅区 RESIDENTIAL BLOCKS",
+        "color": "#ffd166",
+        "hMin": 24,
+        "hMax": 190,
+        "sigma": 0.42,
+        "hMode": 58,
+        "lotW": [
+          7,
+          15
+        ],
+        "lotD": [
+          7,
+          14
+        ],
+        "density": 0.9,
+        "split": 0.22,
+        "neon": 0.85,
+        "ads": 6,
+        "walkable": true
+      },
+      "luxury": {
+        "label": "高级住宅区 PREMIUM RESIDENTIAL",
+        "color": "#ffe9a8",
+        "hMin": 70,
+        "hMax": 420,
+        "sigma": 0.38,
+        "hMode": 150,
+        "lotW": [
+          18,
+          38
+        ],
+        "lotD": [
+          16,
+          34
+        ],
+        "density": 0.7,
+        "split": 0.36,
+        "neon": 0.7,
+        "ads": 5,
+        "walkable": true
+      },
+      "slum": {
+        "label": "贫民窟 UNDERCITY SLUMS",
+        "color": "#ff5f6d",
+        "hMin": 3,
+        "hMax": 50,
+        "sigma": 0.62,
+        "hMode": 11,
+        "lotW": [
+          3.5,
+          7.5
+        ],
+        "lotD": [
+          3.5,
+          7.5
+        ],
+        "density": 0.99,
+        "split": 0.12,
+        "neon": 0.75,
+        "ads": 7,
+        "walkable": true
+      },
+      "underground": {
+        "label": "地下城区 SUBNET / UNDERGROUND",
+        "color": "#8a6bff",
+        "hMin": 0,
+        "hMax": 0,
+        "sigma": 0.3,
+        "hMode": 0,
+        "lotW": [
+          10,
+          26
+        ],
+        "lotD": [
+          10,
+          26
+        ],
+        "density": 0.8,
+        "split": 0.2,
+        "neon": 0.95,
+        "ads": 5,
+        "walkable": true
+      },
+      "sky": {
+        "label": "空中城区 AERIAL CONCESSIONS",
+        "color": "#9fe8ff",
+        "hMin": 0,
+        "hMax": 0,
+        "sigma": 0.3,
+        "hMode": 0,
+        "lotW": [
+          40,
+          90
+        ],
+        "lotD": [
+          40,
+          90
+        ],
+        "density": 0.55,
+        "split": 0.5,
+        "neon": 1,
+        "ads": 6,
+        "walkable": true
+      },
+      "commercial": {
+        "label": "娱乐商业区 ENTERTAINMENT & RETAIL",
+        "color": "#ff4fd8",
+        "hMin": 30,
+        "hMax": 260,
+        "sigma": 0.44,
+        "hMode": 70,
+        "lotW": [
+          9,
+          20
+        ],
+        "lotD": [
+          8,
+          18
+        ],
+        "density": 0.92,
+        "split": 0.2,
+        "neon": 1.6,
+        "ads": 18,
+        "walkable": true
+      },
+      "nightlife": {
+        "label": "夜生活区 NIGHTLIFE STRIP",
+        "color": "#ff2e88",
+        "hMin": 18,
+        "hMax": 180,
+        "sigma": 0.48,
+        "hMode": 46,
+        "lotW": [
+          6,
+          13
+        ],
+        "lotD": [
+          6,
+          12
+        ],
+        "density": 0.96,
+        "split": 0.14,
+        "neon": 1.95,
+        "ads": 20,
+        "walkable": true
+      },
+      "medical": {
+        "label": "医疗中心区 MEDICAL CENTER",
+        "color": "#d8fff5",
+        "hMin": 34,
+        "hMax": 240,
+        "sigma": 0.4,
+        "hMode": 82,
+        "lotW": [
+          26,
+          54
+        ],
+        "lotD": [
+          22,
+          46
+        ],
+        "density": 0.62,
+        "split": 0.42,
+        "neon": 0.8,
+        "ads": 5,
+        "walkable": true
+      },
+      "education": {
+        "label": "教育科研区 ACADEMIC QUARTER",
+        "color": "#8fd6ff",
+        "hMin": 16,
+        "hMax": 150,
+        "sigma": 0.42,
+        "hMode": 38,
+        "lotW": [
+          24,
+          50
+        ],
+        "lotD": [
+          20,
+          44
+        ],
+        "density": 0.58,
+        "split": 0.44,
+        "neon": 0.6,
+        "ads": 4,
+        "walkable": true
+      },
+      "datacenter": {
+        "label": "数据中心区 DATA FORTRESS",
+        "color": "#7d8cff",
+        "hMin": 26,
+        "hMax": 190,
+        "sigma": 0.36,
+        "hMode": 58,
+        "lotW": [
+          30,
+          60
+        ],
+        "lotD": [
+          26,
+          54
+        ],
+        "density": 0.54,
+        "split": 0.54,
+        "neon": 0.9,
+        "ads": 4,
+        "walkable": true
+      },
+      "energy": {
+        "label": "能源供应区 POWER GENERATION",
+        "color": "#ffd23f",
+        "hMin": 10,
+        "hMax": 210,
+        "sigma": 0.58,
+        "hMode": 30,
+        "lotW": [
+          36,
+          80
+        ],
+        "lotD": [
+          32,
+          70
+        ],
+        "density": 0.4,
+        "split": 0.66,
+        "neon": 0.5,
+        "ads": 2,
+        "walkable": true
+      }
+    }
+  },
+  "roads": {
+    "levels": [
+      {
+        "id": 1,
+        "name": "arterial",
+        "targetBlock": 226,
+        "width": [
+          26,
+          40
+        ],
+        "minWidth": 22,
+        "maxWidth": 46,
+        "lanes": [
+          6,
+          12
+        ],
+        "jitter": 0.16,
+        "snapTol": 0.14
+      },
+      {
+        "id": 2,
+        "name": "collector",
+        "targetBlock": 104,
+        "width": [
+          12,
+          18
+        ],
+        "minWidth": 10,
+        "maxWidth": 22,
+        "lanes": [
+          2,
+          6
+        ],
+        "jitter": 0.26,
+        "snapTol": 0.1
+      },
+      {
+        "id": 3,
+        "name": "alley",
+        "targetBlock": 44,
+        "width": [
+          4,
+          7
+        ],
+        "minWidth": 3.5,
+        "maxWidth": 9,
+        "lanes": [
+          1,
+          2
+        ],
+        "jitter": 0.4,
+        "snapTol": 0.07
+      }
+    ],
+    "sidewalkWidth": 3.4,
+    "diagonalBoulevards": [
+      1,
+      3
+    ],
+    "minLotDepth": 9,
+    "crossingEvery": 4
+  },
+  "transit": {
+    "viaduct": {
+      "enabled": true,
+      "count": 2,
+      "deckY": 15.5,
+      "width": 26,
+      "pillarEvery": 32
+    },
+    "maglev": {
+      "enabled": true,
+      "count": 3,
+      "beamY": 24,
+      "pillarEvery": 44,
+      "trains": 6,
+      "speed": 42
+    },
+    "skybridge": {
+      "enabled": true,
+      "maxSpan": 118,
+      "maxHeightDelta": 46,
+      "minY": 22,
+      "maxCount": 190
+    },
+    "airLane": {
+      "enabled": true,
+      "minY": 100,
+      "maxY": 500,
+      "count": 7,
+      "taxis": 70,
+      "speed": [
+        22,
+        46
+      ]
+    },
+    "droneLane": {
+      "enabled": true,
+      "minY": 30,
+      "maxY": 96,
+      "count": 22,
+      "drones": 420,
+      "speed": [
+        8,
+        20
+      ]
+    },
+    "walkway": {
+      "enabled": true,
+      "maxCount": 120,
+      "y": 6.2
+    }
+  },
+  "corporations": {
+    "count": [
+      3,
+      10
+    ],
+    "pool": [
+      {
+        "name": "Nova Dynamics",
+        "ticker": "NVD",
+        "color": "#59e0ff",
+        "hanzi": "新星动力"
+      },
+      {
+        "name": "CyberCore",
+        "ticker": "CYC",
+        "color": "#b07cff",
+        "hanzi": "赛博核心"
+      },
+      {
+        "name": "Titan Systems",
+        "ticker": "TTN",
+        "color": "#ff9a52",
+        "hanzi": "泰坦系统"
+      },
+      {
+        "name": "NeuroLink",
+        "ticker": "NRL",
+        "color": "#67ffd4",
+        "hanzi": "神经链接"
+      },
+      {
+        "name": "Astra Corporation",
+        "ticker": "AST",
+        "color": "#ffd166",
+        "hanzi": "阿斯特拉"
+      },
+      {
+        "name": "Quantum Industries",
+        "ticker": "QTM",
+        "color": "#7d8cff",
+        "hanzi": "量子工业"
+      },
+      {
+        "name": "Zenith Robotics",
+        "ticker": "ZNR",
+        "color": "#ff4fd8",
+        "hanzi": "天顶机器人"
+      },
+      {
+        "name": "HyperMind",
+        "ticker": "HPM",
+        "color": "#ff2e88",
+        "hanzi": "超脑集团"
+      },
+      {
+        "name": "Kirin Biotech",
+        "ticker": "KRB",
+        "color": "#4fd2a8",
+        "hanzi": "麒麟生物"
+      },
+      {
+        "name": "Orbital Foundry",
+        "ticker": "ORB",
+        "color": "#ffe9a8",
+        "hanzi": "轨道铸造"
+      },
+      {
+        "name": "Sable Security",
+        "ticker": "SBL",
+        "color": "#8a6bff",
+        "hanzi": "黑貂安保"
+      },
+      {
+        "name": "Matsuda Heavy",
+        "ticker": "MTH",
+        "color": "#ff5f6d",
+        "hanzi": "松田重工"
+      }
+    ],
+    "territoryRadius": 300
+  },
+  "lighting": {
+    "defaultTime": 22.4,
+    "artificialRatio": 0.95,
+    "dynamicLightPool": 18,
+    "dynamicLightRadius": 46,
+    "neonPalette": [
+      {
+        "color": "#2f7bff",
+        "weight": 0.35
+      },
+      {
+        "color": "#a83cff",
+        "weight": 0.25
+      },
+      {
+        "color": "#20e6d6",
+        "weight": 0.2
+      },
+      {
+        "color": "#ff3fa4",
+        "weight": 0.15
+      },
+      {
+        "color": "#ff2a2a",
+        "weight": 0.05
+      }
+    ],
+    "bloom": {
+      "strength": 0.52,
+      "radius": 0.62,
+      "threshold": 0.88
+    }
+  },
+  "ads": {
+    "atlasCols": 6,
+    "atlasRows": 4,
+    "tileW": 512,
+    "tileH": 256,
+    "holoShare": 0.22,
+    "dynamic": true,
+    "themes": [
+      "ai",
+      "cyberware",
+      "bci",
+      "hovercar",
+      "idol",
+      "pharma",
+      "crypto",
+      "noodle",
+      "security",
+      "energy"
+    ]
+  },
+  "npc": {
+    "count": 9000,
+    "countRange": [
+      1000,
+      50000
+    ],
+    "pathPoints": 12,
+    "maxPaths": 2600,
+    "nearCount": 700,
+    "nearRadius": 150,
+    "walkSpeed": [
+      0.8,
+      1.7
+    ],
+    "occupations": [
+      {
+        "id": "hacker",
+        "label": "黑客",
+        "color": "#67ffd4",
+        "weight": 0.05
+      },
+      {
+        "id": "merc",
+        "label": "佣兵",
+        "color": "#ff9a52",
+        "weight": 0.06
+      },
+      {
+        "id": "engineer",
+        "label": "工程师",
+        "color": "#7d8cff",
+        "weight": 0.08
+      },
+      {
+        "id": "merchant",
+        "label": "商人",
+        "color": "#ffd166",
+        "weight": 0.09
+      },
+      {
+        "id": "police",
+        "label": "警察",
+        "color": "#4fd2ff",
+        "weight": 0.05
+      },
+      {
+        "id": "corp",
+        "label": "企业员工",
+        "color": "#d8d8ff",
+        "weight": 0.16
+      },
+      {
+        "id": "drifter",
+        "label": "流浪者",
+        "color": "#b58a6a",
+        "weight": 0.13
+      },
+      {
+        "id": "tech",
+        "label": "维修工",
+        "color": "#ffb84f",
+        "weight": 0.08
+      },
+      {
+        "id": "medic",
+        "label": "医生",
+        "color": "#d8fff5",
+        "weight": 0.04
+      },
+      {
+        "id": "student",
+        "label": "学生",
+        "color": "#8fd6ff",
+        "weight": 0.07
+      },
+      {
+        "id": "droneop",
+        "label": "无人机管理员",
+        "color": "#a8ff67",
+        "weight": 0.04
+      },
+      {
+        "id": "vendor",
+        "label": "摊贩",
+        "color": "#ff7a4f",
+        "weight": 0.09
+      },
+      {
+        "id": "citizen",
+        "label": "市民",
+        "color": "#c9c9d4",
+        "weight": 0.06
+      }
+    ]
+  },
+  "environment": {
+    "cables": true,
+    "acUnits": true,
+    "pipes": true,
+    "drones": true,
+    "cameras": true,
+    "trash": true,
+    "vendors": true,
+    "vendingMachines": true,
+    "steam": true,
+    "puddles": true,
+    "holograms": true,
+    "reflection": true,
+    "reflectionResolution": 512
+  },
+  "weather": {
+    "default": "rain",
+    "autoCycle": true,
+    "cycleSeconds": [
+      150,
+      420
+    ],
+    "transitionSeconds": 22,
+    "types": {
+      "clear": {
+        "label": "晴天 CLEAR",
+        "fog": 0.00055,
+        "rain": 0,
+        "cloud": 0.05,
+        "sun": 1,
+        "wet": 0.06,
+        "tint": "#0a0f1e",
+        "wind": 0.25
+      },
+      "overcast": {
+        "label": "阴天 OVERCAST",
+        "fog": 0.0011,
+        "rain": 0,
+        "cloud": 0.72,
+        "sun": 0.45,
+        "wet": 0.18,
+        "tint": "#12161f",
+        "wind": 0.5
+      },
+      "rain": {
+        "label": "雨天 RAIN",
+        "fog": 0.00165,
+        "rain": 0.42,
+        "cloud": 0.88,
+        "sun": 0.28,
+        "wet": 0.82,
+        "tint": "#0d1622",
+        "wind": 0.7
+      },
+      "storm": {
+        "label": "暴雨 STORM",
+        "fog": 0.00285,
+        "rain": 1,
+        "cloud": 1,
+        "sun": 0.14,
+        "wet": 1,
+        "tint": "#101a26",
+        "wind": 1.5,
+        "lightning": true
+      },
+      "fog": {
+        "label": "雾天 FOG",
+        "fog": 0.0062,
+        "rain": 0,
+        "cloud": 0.6,
+        "sun": 0.3,
+        "wet": 0.34,
+        "tint": "#1a2028",
+        "wind": 0.15
+      },
+      "acid": {
+        "label": "酸雨 ACID RAIN",
+        "fog": 0.0023,
+        "rain": 0.55,
+        "cloud": 0.95,
+        "sun": 0.18,
+        "wet": 0.9,
+        "tint": "#16240f",
+        "wind": 0.9,
+        "acid": true
+      },
+      "dust": {
+        "label": "沙尘 SANDSTORM",
+        "fog": 0.0048,
+        "rain": 0,
+        "cloud": 0.8,
+        "sun": 0.22,
+        "wet": 0.02,
+        "tint": "#2a1f10",
+        "wind": 2.2,
+        "dust": true
+      }
+    }
+  },
+  "render": {
+    "fov": 72,
+    "near": 0.35,
+    "far": 4200,
+    "shadows": false,
+    "maxPixelRatio": 1.6,
+    "qualityTiers": {
+      "ultra": {
+        "drawDistance": 2600,
+        "npcScale": 1,
+        "rainParticles": 26000,
+        "bloom": true,
+        "reflection": true,
+        "decals": 1
+      },
+      "high": {
+        "drawDistance": 2000,
+        "npcScale": 0.7,
+        "rainParticles": 17000,
+        "bloom": true,
+        "reflection": true,
+        "decals": 0.8
+      },
+      "medium": {
+        "drawDistance": 1400,
+        "npcScale": 0.4,
+        "rainParticles": 9000,
+        "bloom": true,
+        "reflection": false,
+        "decals": 0.55
+      },
+      "low": {
+        "drawDistance": 900,
+        "npcScale": 0.16,
+        "rainParticles": 4000,
+        "bloom": false,
+        "reflection": false,
+        "decals": 0.25
+      }
+    }
+  },
+  "controls": {
+    "walkSpeed": 4.4,
+    "runSpeed": 11,
+    "flySpeed": 46,
+    "flyBoost": 220,
+    "eyeHeight": 1.72,
+    "mouseSensitivity": 0.0022,
+    "topdownHeight": 900,
+    "defaultMode": "topdown"
+  }
+}

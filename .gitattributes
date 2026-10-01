@@ -1,0 +1,17 @@
+# Normalise line endings so the GLSL and JSON sources are byte-identical on
+# every platform. The build inlines shaders verbatim, and a stray CRLF inside a
+# shader string is a difference that shows up only at runtime.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tgz binary
+*.exe binary
+
+# The committed single-file build is generated. Marking it as such keeps it out
+# of the language statistics and stops git from trying to diff a 960 KB bundle.
+dist/cyberpunk-city.html linguist-generated=true -diff
+
+# Shaders are the interesting part of this project; make sure they are counted.
+shaders/*.glsl linguist-language=GLSL
