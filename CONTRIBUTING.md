@@ -35,13 +35,27 @@ npm test        # geometry sanity + zoning sanity, ~2 s, no browser
 npm run build   # must succeed
 ```
 
-`npm test` runs two headless suites that catch the two failure modes this project
+`npm test` runs three headless suites that catch the failure modes this project
 actually has:
 
 | Suite | Catches |
 |---|---|
 | `geom-test` | NaN vertices. Builds every prop, vehicle and building type and asserts every coordinate is finite. |
 | `plan-test` | Zoning collapse. Runs Agent 1 across 10 seeds × 3 map sizes and asserts all sixteen zones clear their minimum area. |
+| `check:encoding` | Text corruption. Sweeps every file for replacement characters, private-use codepoints, known-mojibake sequences and BOMs — see the traps below for why this needs its own guard. |
+
+Two more are worth running before you push, because neither failure is visible
+until after a deployment:
+
+```bash
+npm run check:workflows   # parses both workflows; checks Pages action ordering and doc links
+npm run check:pages       # assembles _site, serves it under /<repo>/, fetches everything the metadata references
+```
+
+`check:pages` is the one that proves the live demo will work. It mounts the site
+under the repository prefix the way GitHub does for a project site, so a broken
+`og:image` path or a file missing from the assembly fails here rather than
+silently after a push.
 
 If you changed anything that affects rendering, also run the browser harness:
 
