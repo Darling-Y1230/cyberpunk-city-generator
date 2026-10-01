@@ -167,6 +167,56 @@ There is no linter. The conventions that actually matter here:
 
 ---
 
+## Publishing your own copy
+
+If you fork this and push, two of the three workflows will just work and one
+will not, for a reason that is not obvious from the failure.
+
+**`CI` will pass.** It fetches three.js and esbuild, runs the two headless
+suites, the encoding guard, the build and the Pages pre-check, and uploads the
+artefact.
+
+**`Deploy demo to GitHub Pages` will fail** — at `actions/configure-pages`, with
+every step before it succeeding:
+
+```
+ok   checkout / setup-node / Fetch dependencies / Build / Assemble site
+FAIL actions/configure-pages@v5
+```
+
+GitHub Pages has to be switched on once per repository, and a freshly created
+one has it off. The step's logs are not readable without authentication, so
+this is stated as an observation rather than a diagnosis. If it keeps failing,
+check both of these:
+
+| Where | What it should be |
+|---|---|
+| Settings → Pages → Source | `GitHub Actions` |
+| Settings → Actions → General → Workflow permissions | *not* read-only — a read-only default means a workflow cannot grant itself the `pages: write` it asks for |
+
+The workflow already passes `enablement: true`, which is the documented way to
+let it enable Pages itself. That alone did not resolve it here.
+
+**Before pushing anything, run the local checks** — they cover the same ground
+the workflows do, plus the things a workflow cannot see:
+
+```bash
+npm test                  # geometry, zoning, encoding
+npm run check:workflows   # workflow structure and doc links
+npm run check:pages       # assembles _site and fetches everything the metadata references
+```
+
+`check:pages` is the useful one: it mounts the site under `/<repo>/` the way
+GitHub serves a project site, so a broken `og:image` or a file missing from the
+assembly fails locally instead of after a deployment.
+
+Finally, if you rename the repository or move to another account, do not edit
+the URLs by hand — `node tools/publish.mjs --user=<you> --repo=<name>` rewrites
+them everywhere they appear, including the `og:image` inside `index.html` that
+gets compiled into the single-file build.
+
+---
+
 ## Reporting a bug
 
 The validator report is the fastest thing to attach. It is printed to the browser
