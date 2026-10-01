@@ -57,27 +57,71 @@ function capture(cmd, args) {
 console.log(`\n  target: ${WEB}`);
 console.log(`  pages : ${PAGES}\n`);
 
-const EDITABLE = ['README.md', 'package.json', 'CONTRIBUTING.md', 'docs/*.md'];
-const files = ['README.md', 'package.json', 'CONTRIBUTING.md',
+// Rewrite from *whatever the files currently say*, read out of package.json,
+// rather than from a hard-coded slug. That makes re-targeting work: running
+// once with the wrong account and again with the right one used to be a no-op,
+// because the second run searched for a slug that no longer existed.
+//
+// index.html is in the list because it is the build's HTML shell: its og:image
+// is inlined into dist/cyberpunk-city.html, so leaving it behind published a
+// link preview pointing at somebody else's Pages URL.
+const files = ['README.md', 'package.json', 'CONTRIBUTING.md', 'index.html',
   'docs/ARCHITECTURE.md', 'docs/PIPELINE.md', 'docs/CONFIG.md'];
 
-let rewritten = 0;
-for (const rel of files) {
-  const p = path.join(ROOT, rel);
-  if (!fs.existsSync(p)) continue;
-  const before = fs.readFileSync(p, 'utf8');
-  const after = before
-    // existing github user/repo slugs of any previous target
-    .replace(/https:\/\/github\.com\/[\w.-]+\/cyberpunk-city-generator/g, WEB)
-    .replace(/https:\/\/[\w.-]+\.github\.io\/cyberpunk-city-generator\//g, PAGES)
-    .replace(/git\+https:\/\/github\.com\/[\w.-]+\/cyberpunk-city-generator\.git/g, `git+${WEB}.git`);
-  if (after !== before) {
-    fs.writeFileSync(p, after);
-    rewritten++;
-    console.log(`  rewrote URLs in ${rel}`);
+const pkgPath = path.join(ROOT, 'package.json');
+let pkg = {};
+try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch { /* left as-is */ }
+
+const slug = String(pkg.repository?.url || '').match(/github\.com[/:]([\w.-]+)\/([\w.-]+?)(?:\.git)?$/);
+const oldOwner = slug ? slug[1] : null;
+const oldRepo = slug ? slug[2] : null;
+const oldPages = String(pkg.homepage || '');
+const oldAuthor = pkg.author;
+
+if (!oldOwner || !oldRepo) {
+  console.log('  ! could not determine the current owner/repo from package.json');
+  console.log('    (URL rewriting skipped; check repository.url)\n');
+} else {
+  const pairs = [
+    [`https://github.com/${oldOwner}/${oldRepo}`, WEB],          // also covers git+https://... and .git
+    [`https://${oldOwner.toLowerCase()}.github.io/${oldRepo}`, `${PAGES.replace(/\/$/, '')}`],
+  ];
+  if (oldPages && oldPages !== PAGES) pairs.push([oldPages.replace(/\/$/, ''), PAGES.replace(/\/$/, '')]);
+  if (oldOwner !== USER) pairs.push([`"author": "${oldOwner}"`, `"author": "${USER}"`]);
+
+  const already = oldOwner === USER && oldRepo === REPO;
+  let rewritten = 0;
+  for (const rel of files) {
+    const p = path.join(ROOT, rel);
+    if (!fs.existsSync(p)) continue;
+    let text = fs.readFileSync(p, 'utf8');
+    const before = text;
+    for (const [from, to] of pairs) {
+      if (from && from !== to) text = text.split(from).join(to);
+    }
+    if (text !== before) {
+      fs.writeFileSync(p, text);
+      rewritten++;
+      console.log(`  rewrote URLs in ${rel}`);
+    }
+  }
+  if (!rewritten) {
+    console.log(already
+      ? '  URLs already point at this target'
+      : '  ! nothing matched — check package.json repository.url and homepage');
+  }
+
+  if (oldRepo !== REPO) {
+    // package.json's "name" is an npm identifier, not a URL, so it is left
+    // alone on purpose — flag it rather than silently changing it.
+    console.log(`\n  note: package.json "name" is still "${pkg.name}";`);
+    console.log(`        the repository is "${REPO}". They need not match, but if you`);
+    console.log('        want them to, edit package.json by hand.');
   }
 }
-console.log(rewritten ? `  ${rewritten} file(s) updated` : '  URLs already correct');
+
+// index.html feeds the build, so the artefact must be regenerated after any
+// rewrite — step 3 below does that unconditionally.
 
 /* ------------------------------------------------------------- 2. sanity gate */
 console.log('\n  running the headless test suites before committing…\n');
