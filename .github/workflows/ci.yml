@@ -33,6 +33,12 @@ jobs:
       - name: Zoning test (no browser)
         run: npm run plan-test
 
+      # Text-encoding guard. A UTF-8 file round-tripped through a CP936 console
+      # loses every multi-byte character silently, and the terminal keeps
+      # displaying it correctly, so nothing else in this pipeline would notice.
+      - name: Encoding guard
+        run: python3 tools/repair-encoding.py --check
+
       - name: Build single-file distribution
         run: node tools/build.mjs
 

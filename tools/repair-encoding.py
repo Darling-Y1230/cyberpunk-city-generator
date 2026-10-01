@@ -9,12 +9,22 @@ running application.
 
 Each replacement below is derived from the known original text, so this is an
 exact repair rather than a guess. It is idempotent: running it twice is a no-op.
+
+    python tools/repair-encoding.py            repair, then verify
+    python tools/repair-encoding.py --check    verify only; exit 1 if damaged
 """
 import io
 import os
+import subprocess
 import sys
 
+CHECK_ONLY = "--check" in sys.argv
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Files that legitimately contain examples of the damaged characters, because
+# they exist to document or repair them.
+ALLOWLIST = {"CONTRIBUTING.md", "tools/repair-encoding.py"}
 
 # U+9225 ("鈥") is what GBK makes of the first two bytes of an em/en dash.
 # The third byte plus the following character were swallowed into a "?".
@@ -72,9 +82,10 @@ for rel in TARGETS:
     for bad, good in REPLACEMENTS:
         if bad in text:
             total += text.count(bad)
-            text = text.replace(bad, good)
+            if not CHECK_ONLY:
+                text = text.replace(bad, good)
 
-    if rel.endswith("vertical.js"):
+    if rel.endswith("vertical.js") and not CHECK_ONLY:
         start = text.find("  const PROGRAM = [")
         end = text.find("\n  ];", start)
         if start >= 0 and end > start:
@@ -90,24 +101,37 @@ for rel in TARGETS:
     else:
         print(f"  unchanged {rel}")
 
-print(f"\n  {total} replacement(s) applied")
+print(f"\n  {total} replacement(s) {'found' if CHECK_ONLY else 'applied'}")
 
-# --- verification: no U+9225, no PUA characters, no stray replacement chars ---
-print("\n  verifying:")
+# --- verification: sweep every tracked text file -----------------------------
+# Checking only the files above would miss damage in a newly added one, which is
+# exactly how this went unnoticed the first time.
+print("\n  verifying (all tracked text files):")
+try:
+    tracked = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True,
+                             text=True, check=True).stdout.split()
+except Exception:
+    tracked = []
+EXTS = (".js", ".mjs", ".json", ".md", ".glsl", ".html", ".yml", ".py", ".txt")
 problems = 0
-for rel in TARGETS:
+for rel in tracked:
+    if not rel.endswith(EXTS):
+        continue
+    if rel in ALLOWLIST:
+        continue
     p = os.path.join(ROOT, rel.replace("/", os.sep))
-    with io.open(p, encoding="utf-8") as fh:
-        t = fh.read()
-    bad = [(i, c) for i, c in enumerate(t)
-           if c == "\u9225" or c == "\ufffd" or 0xE000 <= ord(c) <= 0xF8FF]
-    if bad:
-        problems += len(bad)
-        print(f"    {rel}: {len(bad)} suspicious character(s) remain")
-    b = open(p, "rb").read(3)
-    if b == b"\xef\xbb\xbf":
-        print(f"    {rel}: BOM present")
+    raw = open(p, "rb").read()
+    if raw[:3] == b"\xef\xbb\xbf":
+        print(f"    {rel}: UTF-8 BOM present")
         problems += 1
+    t = raw.decode("utf-8", errors="replace")
+    hits = [i for i, c in enumerate(t)
+            if c == "\u9225" or c == "\ufffd" or 0xE000 <= ord(c) <= 0xF8FF]
+    if hits:
+        ln = t[:hits[0]].count("\n") + 1
+        print(f"    {rel}: {len(hits)} suspicious character(s), first at line {ln}")
+        problems += len(hits)
+
 if not problems:
-    print("    clean")
+    print(f"    clean ({len(tracked)} paths scanned)")
 sys.exit(1 if problems else 0)

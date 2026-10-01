@@ -109,7 +109,7 @@ or run `node tools/strip-bom.mjs`.
 hypothetical: it silently corrupted 53 characters across nine files in this
 repository. `Get-Content -Raw` decodes using the console's active code page
 (CP936/GBK on a Chinese Windows install), so `—` becomes `鈥?`, `façade` becomes
-`façade`, and 霓虹 becomes `闇撳彣`. `Set-Content`/`WriteAllText` then writes that
+`fa莽ade`, and 霓虹 becomes `闇撳彣`. `Set-Content`/`WriteAllText` then writes that
 back as UTF-8 and the original bytes are gone.
 
 The part that makes it dangerous is that **it looks fine**. PowerShell decodes
