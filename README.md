@@ -358,6 +358,7 @@ CPU 每帧的工作量是零。
 ## 许可
 
 [MIT](LICENSE)。`vendor/` 内的 three.js 与 esbuild 各自遵循其 MIT 许可，且**不随仓库分发**。
+三方许可全文见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
 
 ---
 
